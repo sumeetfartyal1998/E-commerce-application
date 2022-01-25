@@ -49,7 +49,7 @@
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure?')" >Delete</button>
-                        </form>
+                        </form></td>
                     </tr>
                     @php 
                     $n++

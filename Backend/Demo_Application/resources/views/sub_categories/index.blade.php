@@ -8,7 +8,7 @@
         @if(Session::has('success'))
             <div class="alert alert-success mt-2">{{Session::get('success')}}</div>
         @endif
-    <div class="card mt-2">
+        <div class="card mt-2">
             <div class="card-header">
             <h3 class="card-title">Sub Categories</h3>
             <div class="card-tools">
@@ -69,7 +69,7 @@
             
         </div>
         <div class="d-flex justify-content-center">
-        <a href="{{route('sub_categories.create')}}" class="btn btn-success">Add New Sub Category</a>
+            <a href="{{route('sub_categories.create')}}" class="btn btn-success">Add New Sub Category</a>
         </div>
     </div>
 </main>

@@ -22,6 +22,8 @@ class CreateOrdersTable extends Migration
             $table->bigInteger('coupon_id')->unsigned()->nullable();
             $table->foreign('coupon_id')->references('id')->on('coupons');
             $table->integer('total_amount');
+            $table->string('payment_mode');
+            $table->string('order_status');
             $table->timestamps();
         });
     }

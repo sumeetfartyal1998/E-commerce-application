@@ -42,7 +42,7 @@
                         <td>{{$d->name}}</td>
                         <td>{{$d->email}}</td>
                         <td>{{$d->contact}}</td>
-                        <td>{{$d->message}}</td>
+                        <td><a href="/userMessage/{{$d->id}}" class="btn btn-info">View</a></td>
                     </tr>
                     @php 
                     $n++

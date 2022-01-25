@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContactUs;
+use App\Models\Settings;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class APIController extends Controller
@@ -47,6 +49,23 @@ class APIController extends Controller
             $user->role="Customer";
             $user->status=1;
             if($user->save()){
+                $data=['email'=>$req->email,'password'=>$req->pass];
+                $userr['to']=$req->email;
+                Mail::send('mail.registration',$data,function($message) use ($userr){
+                    $message->to($userr['to']);
+                    $message->subject('Registration Confirmation');
+                });
+
+                //Mail to admin
+                $settings=Settings::find(1)->first();
+                if($settings->userRegistered){
+                    $data2=['email'=>$req->email];
+                    $admin['to']='sammyfartyal1106@gmail.com';
+                    Mail::send('mail.adminRegistered',$data2,function($message) use ($admin){
+                        $message->to($admin['to']);
+                        $message->subject('Registration Confirmation');
+                    });
+                }
                 return response()->json(["result"=>"Registered Successfully"]);
             }
         }
@@ -140,6 +159,15 @@ class APIController extends Controller
             $data->contact=$req->contact;
             $data->message=$req->message;
             if($data->save()){
+                $settings=Settings::all();
+                if($settings[0]->contactUs){
+                    $data2=['name'=>$req->name,'email'=>$req->email,'mobile'=>$req->contact,'msg'=>$req->message];
+                    $admin['to']='sammyfartyal1106@gmail.com';
+                    Mail::send('mailAdmin.contactUs',$data2,function($message) use ($admin){
+                        $message->to($admin['to']);
+                        $message->subject('User message');
+                    });
+                }
                 return response()->json(["result"=>"Your feedback has been submitted. We will contact you as soon as possible"]);
             }
         }

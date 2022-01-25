@@ -36,7 +36,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="#" class="nav-link active">
+            <a href="/home" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -54,7 +54,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/adduser" class="nav-link">
+                <a href="{{ route('user.create')}}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Add User</p>
                 </a>
@@ -66,14 +66,41 @@
                 </a>
               </li>
               <li class="nav-item">
+                <a href="{{route('category.create')}}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add Category</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('sub_categories.create')}}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add Sub Category</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="{{route('products.create')}}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Add Product</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{route('coupons.create')}}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add Coupon</p>
+                </a>
+              </li>
             </ul>
           </li>
 
+          <li class="nav-item">
+            <a href="/banner" class="nav-link">
+              <i class="nav-icon fas fa-table"></i>
+              <p>
+                Banners
+              </p>
+            </a>
+          </li>
+          
           <li class="nav-item">
             <a href="/category" class="nav-link">
               <i class="nav-icon fas fa-copy"></i>
@@ -82,7 +109,52 @@
               </p>
             </a>
           </li>
-          
+
+          <li class="nav-item">
+            <a href="/products" class="nav-link">
+              <i class="fab fa-product-hunt mx-1" style="font-size: 20px;"></i>
+              <p>
+                Products
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="/contactus" class="nav-link">
+              <i class="fas fa-envelope mx-1" style="font-size: 20px;"></i>
+              <p>
+                User Messages
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="{{route('coupons.index')}}" class="nav-link">
+              <i class="fab fa-contao mx-1" style="font-size: 20px;"></i>
+              <p>
+                Coupons
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="/reports" class="nav-link">
+              <i class="fas fa-file mx-1" style="font-size: 20px;"></i>
+              <p>
+                Reports
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="{{route('settings.edit',1)}}" class="nav-link">
+              <i class="fas fa-users-cog mx-1" style="font-size: 20px;"></i>
+              <p>
+                Settings
+              </p>
+            </a>
+          </li>
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

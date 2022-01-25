@@ -16,7 +16,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products=Product::paginate(5);
+        return view('/products.index')->with('products',$products);
     }
 
     /**
@@ -116,7 +117,8 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $product=Product::find($id);
+        return view('/products.edit')->with('product',$product);
     }
 
     /**
@@ -126,9 +128,26 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req, $id)
     {
-        //
+        $validateData=$req->validate([
+            'title'=>'required',
+            'price'=>'required|numeric',
+            'desc'=>'required'
+        ],[
+            'title.required'=>'Enter the product name',
+            'price.required'=>'Enter the product price',
+            'price.numeric'=>'Enter a valid price',
+            'desc.required'=>'Description is required',
+        ]);
+        if($validateData){
+            $product=Product::find($id);
+            $product->title=$req->title;
+            $product->desc=$req->desc;
+            $product->price=$req->price;
+            $product->save();
+            return redirect('/products')->with('success','Product Updated Successfully');
+        }
     }
 
     /**
@@ -138,7 +157,42 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-        //
+    {   
+        $productImages=ProductImage::where('product_id',$id)->get();
+        $product=Product::find($id);
+        foreach($productImages as $image){
+            if(unlink(public_path('uploads/ProductImages/'.$image->image_name))){
+                $image->delete();
+            }
+        }
+        if(unlink(public_path('uploads/ProductImages/'.$product->product_main_image))){
+            $product->delete();
+        }
+        return back()->with('success','Product updated successfully');
+    }
+
+    // Edit Product Main Image
+    public function changeImageForm($id){
+        return view('products.editMainImg')->with('id',$id);
+    }
+
+    public function changeImage(Request $req){
+        $validateData=$req->validate([
+            'img'=>'required|mimes:jpg,jpeg,png',
+        ],[
+            'img.required'=>'Image file is required',
+            'img.mimes'=>'Upload an image file'
+        ]);
+        if($validateData){
+            $product=Product::find($req->id);
+            $imgName='Image-'.rand().'.'.$req->img->extension();
+            if(unlink(public_path('uploads/ProductImages/'.$product->product_main_image))){
+                $product->product_main_image=$imgName;
+                if($req->img->move(public_path('uploads/ProductImages'),$imgName)){
+                    $product->save();
+                }
+            }
+            return redirect('/products')->with('success','Product deleted successfully');
+        }
     }
 }

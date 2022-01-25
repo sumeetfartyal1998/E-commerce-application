@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderedProduct;
+use App\Models\Product;
+use App\Models\Settings;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class APICheckoutController extends Controller
@@ -41,13 +45,16 @@ class APICheckoutController extends Controller
             'user_id'=>'required',
             'address_id'=>'required',
             'total_amount'=>'required',
-            'product'=>'required'
+            'products'=>'required',
+            'payment_mode'=>'required',
+            'order_status'=>'required'
         );
         $errMsg=array(
             'user_id.required'=>'User id is required.',
             'address_id.required'=>'Address id is required.',
             'total_amount.required'=>'Total amount is required.',
-            'product.required'=>'Product is required.',
+            'products.required'=>'Product is required.',
+            'payment_mode.required'=>'Payment mode is required.',
         );
         $validator=Validator::make($req->all(),$rules,$errMsg);
         if($validator->fails()){
@@ -57,12 +64,44 @@ class APICheckoutController extends Controller
             $order->user_id=$req->user_id;
             $order->address_id=$req->address_id;
             $order->coupon_id=$req->coupon_id;
-            $order->total_amount;
+            $order->payment_mode=$req->payment_mode;
+            $order->total_amount=$req->total_amount;
+            $order->order_status=$req->order_status;
             if($order->save()){
-                foreach($req->product as $product){
+                $order=Order::latest()->first();
+                $order_id=$order->id;
+                $allOrders="";
+                // $req->products;
+                for($i=0;$i<count($req->products);$i++){
                     $orderedProduct=new OrderedProduct();
-                    
+                    $orderedProduct->order_id=$order_id;
+                    $orderedProduct->product_id=$req->products[$i]['product']['id'];
+                    $orderedProduct->quantity=$req->products[$i]['quantity'];
+                    $orderedProduct->save();
+                    $product=Product::find($req->products[$i]['product']['id'])->first();
+                    $allOrders.=$product->title.","." ";
                 }
+                $allOrders=rtrim($allOrders,", ");
+                $user=User::find($req->user_id);
+                $userEmail=$user->email;
+                $data=['allOrders'=>$allOrders];
+                $user['to']=$userEmail;
+                Mail::send('mail.orderPlaced',$data,function($message) use ($user){
+                    $message->to($user['to']);
+                    $message->subject('Order Confirmation');
+                });
+
+                $settings=Settings::find(1);
+                $orderPlaced=$settings->orderPlaced;
+                if($orderPlaced){
+                    $data2=['allOrders'=>$allOrders,'userEmail'=>$userEmail];
+                    $admin['to']='sammyfartyal1106@gmail.com';
+                    Mail::send('mail.orderPlaced',$data2,function($message) use ($admin){
+                        $message->to($admin['to']);
+                        $message->subject('Order Confirmation');
+                    });
+                }
+                return response()->json(["result"=>"Ordered Successfully"]);
             }
         }
     }
